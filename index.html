@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novara Coin (NVR) - Wallet & Transazioni</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <span class="logo">⛓️</span>
+                <span class="brand-text">NOVARA COIN</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">Chi Siamo</a>
+                <a href="#wallet">Wallet</a>
+                <a href="#transactions">Transazioni</a>
+                <a href="#download">Download</a>
+                <a href="#blockchain">Blockchain</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="gradient-text">NOVARA COIN</span><br>
+                Wallet Sicuro & Transazioni Istantanee
+            </h1>
+            <p class="hero-subtitle">
+                La cryptocurrency con supply limitato a <strong>1000 NVR</strong>.<br>
+                Wallet anonimi, transazioni gratuite, sicurezza bancaria. 🔒
+            </p>
+            <div class="hero-buttons">
+                <a href="#download" class="btn btn-primary">
+                    🚀 Scarica Novara Core
+                </a>
+                <a href="#wallet" class="btn btn-secondary">
+                    👛 Crea il tuo Wallet
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number">1,000</div>
+                    <div class="stat-label">Supply Totale</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="current-supply">-</div>
+                    <div class="stat-label">NVR Minati</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="remaining-supply">-</div>
+                    <div class="stat-label">NVR Rimasti</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" id="block-count">-</div>
+                    <div class="stat-label">Blocchi</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="wallet-demo">
+                <div class="demo-card">
+                    <div class="demo-header">Il Tuo Wallet NVR</div>
+                    <div class="demo-address">
+                        <span>Indirizzo:</span>
+                        <code>1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</code>
+                        <button class="copy-btn">📋</button>
+                    </div>
+                    <div class="demo-balance">
+                        <span>Saldo:</span>
+                        <strong>150.500000 NVR</strong>
+                    </div>
+                    <div class="demo-actions">
+                        <button class="demo-btn">Crea Wallet</button>
+                        <button class="demo-btn">Invia NVR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section">
+        <div class="container">
+            <h2 class="section-title">Cos'è Novara Coin? 💎</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>
+                        <strong>Novara Coin (NVR)</strong> è una cryptocurrency rivoluzionaria che combina 
+                        la sicurezza della blockchain con un modello economico unico di <strong>scarsità digitale</strong>.
+                    </p>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">💰</div>
+                            <h3>Supply Limitato</h3>
+                            <p>Solo 1,000 NVR saranno mai creati. Rarità assoluta.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🎯</div>
+                            <h3>Transazioni Gratuite</h3>
+                            <p>Nessuna fee di transazione. Mai.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🔒</div>
+                            <h3>Sicuro & Anonimo</h3>
+                            <p>Wallet anonimi stile Bitcoin.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">⚡</div>
+                            <h3>Istantaneo</h3>
+                            <p>Transazioni confirmate in pochi secondi.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wallet Section -->
+    <section id="wallet" class="section bg-dark">
+        <div class="container">
+            <h2 class="section-title">Gestione Wallet Sicura 👛</h2>
+            <div class="wallet-features">
+                <div class="wallet-feature">
+                    <div class="feature-icon">🆕</div>
+                    <h3>Crea Wallet Istantaneo</h3>
+                    <p>Genera un nuovo wallet anonimo in pochi secondi. Nessuna registrazione richiesta.</p>
+                </div>
+                <div class="wallet-feature">
+                    <div class="feature-icon">📋</div>
+                    <h3>Copia Indirizzo</h3>
+                    <p>Copia il tuo indirizzo pubblico per ricevere pagamenti con un click.</p>
+                </div>
+                <div class="wallet-feature">
+                    <div class="feature-icon">🔑</div>
+                    <h3>Backup Private Key</h3>
+                    <p>Salva la tua private key in un luogo sicuro. Hai il controllo totale.</p>
+                </div>
+                <div class="wallet-feature">
+                    <div class="feature-icon">📥</div>
+                    <h3>Importa Wallet</h3>
+                    <p>Importa wallet esistenti usando la private key.</p>
+                </div>
+            </div>
+            
+            <div class="wallet-demo-container">
+                <h3>Demo Interattiva Wallet</h3>
+                <div class="demo-wallet">
+                    <div class="demo-section">
+                        <h4>👛 Il Tuo Portafoglio Novara</h4>
+                        <div class="wallet-info">
+                            <div class="info-item">
+                                <label>Indirizzo Pubblico:</label>
+                                <div class="address-container">
+                                    <code id="demo-address">1NVRa1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('demo-address')">📋</button>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <label>Private Key:</label>
+                                <div class="address-container">
+                                    <code id="demo-privatekey">L4gS7fEaJ9vC8hB2nM1kP5qR3tW6yX7zV0...</code>
+                                    <button class="copy-btn" onclick="copyToClipboard('demo-privatekey')">📋</button>
+                                </div>
+                            </div>
+                            <div class="info-item">
+                                <label>Saldo Attuale:</label>
+                                <div class="balance-amount">250.750000 NVR</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="demo-actions">
+                        <button class="demo-action-btn" onclick="generateNewWallet()">
+                            🆕 Genera Nuovo Wallet
+                        </button>
+                        <button class="demo-action-btn" onclick="showImportDialog()">
+                            📥 Importa Wallet
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Transactions Section -->
+    <section id="transactions" class="section">
+        <div class="container">
+            <h2 class="section-title">Transazioni Istantanee & Gratuite 💸</h2>
+            <div class="transactions-content">
+                <div class="transaction-demo">
+                    <h3>Invia NVR in pochi click</h3>
+                    <div class="transaction-form">
+                        <div class="form-group">
+                            <label for="to-address">Indirizzo Destinatario:</label>
+                            <input type="text" id="to-address" placeholder="1ABC..." class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Quantità NVR:</label>
+                            <input type="number" id="amount" placeholder="0.000000" step="0.000001" class="form-input">
+                        </div>
+                        <button class="btn btn-primary btn-large" onclick="sendDemoTransaction()">
+                            🚀 Invia Transazione Gratuita
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="transaction-features">
+                    <div class="transaction-feature">
+                        <h4>✅ Zero Fee</h4>
+                        <p>Nessun costo per le transazioni. L'importo che invii è esattamente quello che arriva.</p>
+                    </div>
+                    <div class="transaction-feature">
+                        <h4>⚡ Istantaneo</h4>
+                        <p>Transazioni confirmate in pochi secondi sulla blockchain.</p>
+                    </div>
+                    <div class="transaction-feature">
+                        <h4>🔐 Sicuro</h4>
+                        <p>Firme digitali ECDSA come Bitcoin per massima sicurezza.</p>
+                    </div>
+                    <div class="transaction-feature">
+                        <h4>🌍 Globale</h4>
+                        <p>Invia NVR a chiunque, ovunque nel mondo, istantaneamente.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="section bg-dark">
+        <div class="container">
+            <h2 class="section-title">Scarica Novara Core 📥</h2>
+            <div class="download-options">
+                <div class="download-card">
+                    <div class="os-icon">💻</div>
+                    <h3>Windows</h3>
+                    <p>NovaraCore.exe</p>
+                    <p class="file-size">~15 MB</p>
+                    <a href="#" class="btn btn-download" onclick="alert('Download disponibile a breve!')">
+                        📥 Scarica per Windows
+                    </a>
+                </div>
+                <div class="download-card">
+                    <div class="os-icon">🍎</div>
+                    <h3>macOS</h3>
+                    <p>NovaraCore.dmg</p>
+                    <p class="file-size">~18 MB</p>
+                    <a href="#" class="btn btn-download" onclick="alert('Download disponibile a breve!')">
+                        📥 Scarica per macOS
+                    </a>
+                </div>
+                <div class="download-card">
+                    <div class="os-icon">🐧</div>
+                    <h3>Linux</h3>
+                    <p>NovaraCore.AppImage</p>
+                    <p class="file-size">~16 MB</p>
+                    <a href="#" class="btn btn-download" onclick="alert('Download disponibile a breve!')">
+                        📥 Scarica per Linux
+                    </a>
+                </div>
+            </div>
+            
+            <div class="requirements">
+                <h4>Requisiti di Sistema:</h4>
+                <div class="req-grid">
+                    <div class="req-item">
+                        <span class="req-icon">✅</span>
+                        <span>Windows 10/11, macOS 10.14+, o Linux Ubuntu 18.04+</span>
+                    </div>
+                    <div class="req-item">
+                        <span class="req-icon">✅</span>
+                        <span>4GB RAM, 500MB spazio libero</span>
+                    </div>
+                    <div class="req-item">
+                        <span class="req-icon">✅</span>
+                        <span>Connessione Internet</span>
+                    </div>
+                    <div class="req-item">
+                        <span class="req-icon">💡</span>
+                        <span>Nessun mining - Solo wallet e transazioni</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blockchain Section -->
+    <section id="blockchain" class="section">
+        <div class="container">
+            <h2 class="section-title">Blockchain in Tempo Reale ⛓️</h2>
+            <div class="blockchain-stats">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📦</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="live-blocks">-</div>
+                            <div class="stat-name">Blocchi Totali</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💸</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="live-transactions">-</div>
+                            <div class="stat-name">Transazioni</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">👛</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="live-wallets">-</div>
+                            <div class="stat-name">Wallet Attivi</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🕒</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="live-uptime">99.9%</div>
+                            <div class="stat-name">Uptime</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div class="progress-label">
+                        <span>Supply in Circolazione</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill"></div>
+                    </div>
+                    <div class="progress-numbers">
+                        <span id="mined-nvr">0</span>
+                        <span>/ 1000 NVR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <span class="logo">⛓️</span>
+                    <span class="brand-text">NOVARA COIN</span>
+                    <p>Wallet Sicuri & Transazioni Gratuite</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#about">Chi Siamo</a>
+                    <a href="#wallet">Wallet</a>
+                    <a href="#transactions">Transazioni</a>
+                    <a href="#download">Download</a>
+                    <a href="#blockchain">Blockchain</a>
+                </div>
+                <div class="footer-social">
+                    <a href="https://github.com/tuoutente/novara-coin" class="social-link" target="_blank">GitHub</a>
+                    <a href="#" class="social-link">Documentazione</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Novara Coin. Tutti i diritti riservati.</p>
+                <p>Supply limitato a 1000 NVR - Rarità digitale assoluta. 💎</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Import Wallet Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeImportDialog()">&times;</span>
+            <h3>📥 Importa Wallet</h3>
+            <p>Incolla la tua Private Key per importare un wallet esistente:</p>
+            <textarea id="privateKeyInput" placeholder="Inserisci la private key qui..." class="modal-input"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeImportDialog()">Annulla</button>
+                <button class="btn btn-primary" onclick="importWallet()">Importa Wallet</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
