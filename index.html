@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novara Coin (NVR) - Wallet Reale</title>
+    <title>Novara Coin (NVR) - Wallet Ufficiale</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#10b981">
+    
+    <!-- Librerie ECDSA secp256k1 REALI -->
+    <script src="lib/elliptic.min.js"></script>
+    <script src="lib/js-sha3.min.js"></script>
+    <script src="lib/base58.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -52,7 +55,7 @@
             <!-- Wallet Tab -->
             <div id="wallet" class="tab-content active">
                 <div class="card">
-                    <h2 class="card-title">Il Tuo Portafoglio</h2>
+                    <h2 class="card-title">Il Tuo Portafoglio NVR</h2>
                     
                     <div class="wallet-info">
                         <div class="balance-section">
@@ -66,7 +69,7 @@
                         </div>
                         
                         <div class="address-section">
-                            <div class="address-label">Il Tuo Indirizzo</div>
+                            <div class="address-label">Il Tuo Indirizzo Novara Coin</div>
                             <div class="address-display" id="walletAddress">
                                 <span id="currentAddress">Crea o importa un wallet</span>
                                 <button class="copy-btn" onclick="copyAddress()">📋</button>
@@ -98,31 +101,33 @@
             <!-- Send Tab -->
             <div id="send" class="tab-content">
                 <div class="card">
-                    <h2 class="card-title">Invia NVR</h2>
+                    <h2 class="card-title">Invia NVR - GRATIS</h2>
                     
                     <form id="sendForm">
                         <div class="form-group">
-                            <label for="toAddress">Destinatario:</label>
-                            <input type="text" id="toAddress" placeholder="Indirizzo NVR (inizia con 1...)" required>
+                            <label for="toAddress">Indirizzo Destinatario:</label>
+                            <input type="text" id="toAddress" placeholder="Inizia con 1..." required>
+                            <div class="input-hint">Indirizzo Novara Coin (34 caratteri)</div>
                         </div>
                         
                         <div class="form-group">
                             <label for="amount">Quantità NVR:</label>
                             <input type="number" id="amount" step="0.000001" min="0.000001" max="1000" placeholder="0.000000" required>
+                            <div class="input-hint">Massimo 6 decimali</div>
                         </div>
 
                         <div class="transaction-info">
                             <div class="info-item">
                                 <span>💰 Commissione:</span>
-                                <span class="info-value">GRATUITA</span>
+                                <span class="info-value success">GRATUITA</span>
                             </div>
                             <div class="info-item">
                                 <span>⚡ Velocità:</span>
-                                <span class="info-value">Istantanea</span>
+                                <span class="info-value success">Istantanea</span>
                             </div>
                             <div class="info-item">
                                 <span>🔐 Sicurezza:</span>
-                                <span class="info-value">Firma ECDSA</span>
+                                <span class="info-value">Firma ECDSA secp256k1</span>
                             </div>
                         </div>
 
@@ -182,7 +187,7 @@
             <!-- History Tab -->
             <div id="history" class="tab-content">
                 <div class="card">
-                    <h2 class="card-title">Cronologia Completa</h2>
+                    <h2 class="card-title">Cronologia Transazioni</h2>
                     
                     <div class="history-filters">
                         <button class="filter-btn active" data-filter="all">Tutte</button>
@@ -209,11 +214,11 @@
     <div id="importModal" class="modal">
         <div class="modal-content">
             <h3>📥 Importa Wallet</h3>
-            <p>Incolla la tua Private Key:</p>
-            <textarea id="privateKeyInput" placeholder="Inserisci la private key esadecimale..." rows="4"></textarea>
+            <p>Incolla la tua Private Key (64 caratteri esadecimali):</p>
+            <textarea id="privateKeyInput" placeholder="Inserisci la private key esadecimale di 64 caratteri..." rows="3"></textarea>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeImportModal()">Annulla</button>
-                <button class="btn btn-primary" onclick="importWallet()">Importa</button>
+                <button class="btn btn-primary" onclick="importWallet()">Importa Wallet</button>
             </div>
         </div>
     </div>
@@ -222,12 +227,12 @@
         <div class="modal-content">
             <h3>🔑 La Tua Private Key</h3>
             <div class="warning-message">
-                ⚠️ CONSERVALA IN UN LUOGO SICURO!
-                <br>Se la perdi, perdi l'accesso al wallet.
+                ⚠️ <strong>CONSERVALA IN UN LUOGO SICURO!</strong><br>
+                Se la perdi, perdi l'accesso al wallet e ai tuoi NVR.
             </div>
             <div class="private-key-display" id="privateKeyDisplay"></div>
             <div class="modal-actions">
-                <button class="btn btn-success" onclick="copyPrivateKey()">📋 Copia</button>
+                <button class="btn btn-success" onclick="copyPrivateKey()">📋 Copia Private Key</button>
                 <button class="btn btn-secondary" onclick="closePrivateKeyModal()">Chiudi</button>
             </div>
         </div>
@@ -240,8 +245,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="api.js"></script>
     <script src="wallet.js"></script>
+    <script src="api.js"></script>
     <script src="transactions.js"></script>
     <script src="app.js"></script>
 </body>
