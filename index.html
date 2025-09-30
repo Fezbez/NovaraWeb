@@ -22,25 +22,29 @@
                         <span class="nav-icon">📊</span>
                         Overview
                     </a>
-                    <a href="#explorer" class="nav-link">
-                        <span class="nav-icon">🔍</span>
-                        Explorer
-                    </a>
                     <a href="#wallet" class="nav-link">
                         <span class="nav-icon">👛</span>
                         Wallet
+                    </a>
+                    <a href="#send" class="nav-link">
+                        <span class="nav-icon">💸</span>
+                        Invia NVR
                     </a>
                     <a href="#blocks" class="nav-link">
                         <span class="nav-icon">⛓️</span>
                         Blocchi
                     </a>
                     <a href="#transactions" class="nav-link">
-                        <span class="nav-icon">💸</span>
+                        <span class="nav-icon">📋</span>
                         Transazioni
                     </a>
                 </div>
 
                 <div class="nav-actions">
+                    <div class="wallet-indicator">
+                        <span class="wallet-icon">👛</span>
+                        <span id="current-wallet">Nessun wallet</span>
+                    </div>
                     <div class="network-status">
                         <span class="status-dot" id="status-dot"></span>
                         <span id="network-status">Connessione...</span>
@@ -112,16 +116,16 @@
                     <h3>Azioni Rapide</h3>
                     <div class="actions-grid">
                         <button class="action-btn" onclick="showSection('wallet')">
-                            <span class="action-icon">🔍</span>
-                            <span class="action-text">Cerca Wallet</span>
+                            <span class="action-icon">👛</span>
+                            <span class="action-text">Gestisci Wallet</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('send')">
+                            <span class="action-icon">💸</span>
+                            <span class="action-text">Invia NVR</span>
                         </button>
                         <button class="action-btn" onclick="showSection('blocks')">
                             <span class="action-icon">⛓️</span>
                             <span class="action-text">Ultimi Blocchi</span>
-                        </button>
-                        <button class="action-btn" onclick="showSection('transactions')">
-                            <span class="action-icon">💸</span>
-                            <span class="action-text">Transazioni</span>
                         </button>
                         <button class="action-btn" onclick="refreshAllData()">
                             <span class="action-icon">🔄</span>
@@ -131,82 +135,176 @@
                 </div>
             </section>
 
-            <!-- Wallet Explorer Section -->
+            <!-- Wallet Management Section -->
             <section id="wallet" class="section">
                 <div class="section-header">
-                    <h1>Wallet Explorer</h1>
-                    <p>Cerca e analizza wallet sulla blockchain</p>
+                    <h1>Gestione Wallet</h1>
+                    <p>Crea, importa e gestisci i tuoi wallet Novara Coin</p>
                 </div>
 
-                <div class="search-container">
-                    <div class="search-box">
-                        <div class="search-input-group">
-                            <span class="search-icon">👛</span>
-                            <input 
-                                type="text" 
-                                id="wallet-address" 
-                                placeholder="Inserisci indirizzo wallet (es: foundation...)" 
-                                class="search-input"
-                            >
-                        </div>
-                        <button onclick="searchWallet()" class="search-btn">
-                            <span class="btn-icon">🔍</span>
-                            Cerca Wallet
-                        </button>
-                    </div>
-                </div>
-
-                <div id="wallet-result" class="result-card hidden">
-                    <div class="result-header">
-                        <h3>📋 Dettagli Wallet</h3>
-                        <div class="result-actions">
-                            <button onclick="copyToClipboard('result-address')" class="icon-btn" title="Copia indirizzo">
-                                📋
-                            </button>
-                            <button onclick="loadWalletTransactions()" class="icon-btn" title="Carica transazioni">
-                                🔄
+                <div class="wallet-management">
+                    <!-- Wallet Actions -->
+                    <div class="wallet-actions">
+                        <div class="action-card">
+                            <h3>🆕 Crea Nuovo Wallet</h3>
+                            <p>Genera un nuovo wallet anonimo e sicuro</p>
+                            <button onclick="createNewWallet()" class="btn btn-primary">
+                                🎲 Genera Wallet
                             </button>
                         </div>
-                    </div>
-                    
-                    <div class="result-content">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>Indirizzo:</label>
-                                <code id="result-address" class="address-code">-</code>
-                            </div>
-                            <div class="info-item">
-                                <label>Saldo:</label>
-                                <span id="result-balance" class="balance-amount">- NVR</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Transazioni:</label>
-                                <span id="result-tx-count" class="tx-count">-</span>
-                            </div>
-                            <div class="info-item">
-                                <label>Stato:</label>
-                                <span class="status-badge active">Attivo</span>
+
+                        <div class="action-card">
+                            <h3>📥 Importa Wallet</h3>
+                            <p>Importa un wallet esistente con la private key</p>
+                            <button onclick="showImportModal()" class="btn btn-secondary">
+                                🔑 Importa Wallet
+                            </button>
+                        </div>
+
+                        <div class="action-card">
+                            <h3>👀 Wallet Corrente</h3>
+                            <div id="current-wallet-info" class="wallet-info-preview">
+                                <div class="no-wallet">Nessun wallet selezionato</div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="wallet-transactions" class="transactions-list hidden">
-                        <h4>Ultime Transazioni</h4>
-                        <div id="wallet-tx-container" class="data-container">
-                            <!-- Transazioni del wallet -->
+                    <!-- Wallet List -->
+                    <div class="wallet-list-section">
+                        <h3>I Tuoi Wallet</h3>
+                        <div id="wallet-list" class="wallet-list">
+                            <div class="no-wallets">Nessun wallet salvato</div>
+                        </div>
+                    </div>
+
+                    <!-- Wallet Explorer -->
+                    <div class="search-container">
+                        <h3>🔍 Cerca Wallet sulla Blockchain</h3>
+                        <div class="search-box">
+                            <div class="search-input-group">
+                                <span class="search-icon">👛</span>
+                                <input 
+                                    type="text" 
+                                    id="wallet-address" 
+                                    placeholder="Inserisci indirizzo wallet (es: foundation...)" 
+                                    class="search-input"
+                                >
+                            </div>
+                            <button onclick="searchWallet()" class="search-btn">
+                                <span class="btn-icon">🔍</span>
+                                Cerca Wallet
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="wallet-result" class="result-card hidden">
+                        <div class="result-header">
+                            <h3>📋 Dettagli Wallet</h3>
+                            <div class="result-actions">
+                                <button onclick="copyToClipboard('result-address')" class="icon-btn" title="Copia indirizzo">
+                                    📋
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="result-content">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Indirizzo:</label>
+                                    <code id="result-address" class="address-code">-</code>
+                                </div>
+                                <div class="info-item">
+                                    <label>Saldo:</label>
+                                    <span id="result-balance" class="balance-amount">- NVR</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Transazioni:</label>
+                                    <span id="result-tx-count" class="tx-count">-</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="wallet-examples">
-                    <h4>Wallet Esempio (prova questi):</h4>
-                    <div class="example-addresses">
-                        <button class="example-btn" onclick="fillExample('foundation')">
-                            foundation (Genesis)
-                        </button>
-                        <button class="example-btn" onclick="fillExample('miner1')">
-                            miner1 (Mining)
-                        </button>
+            <!-- Send NVR Section -->
+            <section id="send" class="section">
+                <div class="section-header">
+                    <h1>Invia NVR</h1>
+                    <p>Invia Novara Coin in modo sicuro e gratuito</p>
+                </div>
+
+                <div class="send-container">
+                    <!-- Sender Info -->
+                    <div class="sender-info">
+                        <h3>👤 Mittente</h3>
+                        <div id="sender-wallet" class="wallet-card">
+                            <div class="no-wallet-selected">
+                                <p>Seleziona un wallet per inviare NVR</p>
+                                <button onclick="showSection('wallet')" class="btn btn-secondary">
+                                    🎯 Scegli Wallet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Form -->
+                    <div class="transaction-form-container">
+                        <h3>💸 Nuova Transazione</h3>
+                        <form id="send-form" class="transaction-form">
+                            <div class="form-group">
+                                <label for="to-address">Indirizzo Destinatario:</label>
+                                <input 
+                                    type="text" 
+                                    id="to-address" 
+                                    placeholder="Inserisci indirizzo destinatario" 
+                                    class="form-input"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="amount">Quantità NVR:</label>
+                                <input 
+                                    type="number" 
+                                    id="amount" 
+                                    placeholder="0.000000" 
+                                    step="0.000001"
+                                    min="0.000001"
+                                    max="1000"
+                                    class="form-input"
+                                    required
+                                >
+                                <div class="amount-helper">
+                                    <small>Saldo disponibile: <span id="available-balance">0.000000 NVR</span></small>
+                                    <button type="button" onclick="setMaxAmount()" class="link-btn">Usa tutto</button>
+                                </div>
+                            </div>
+
+                            <div class="transaction-details">
+                                <div class="detail-item">
+                                    <span>Fee di transazione:</span>
+                                    <span class="fee-amount">0.000000 NVR 🎉</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span>Totale da inviare:</span>
+                                    <span id="total-amount" class="total-amount">0.000000 NVR</span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-large" id="send-button" disabled>
+                                <span class="btn-icon">🚀</span>
+                                Invia Transazione Gratuita
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Transaction History -->
+                    <div class="transaction-history">
+                        <h3>📜 Le Tue Transazioni</h3>
+                        <div id="user-transactions" class="transactions-list">
+                            <div class="no-transactions">Nessuna transazione effettuata</div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -242,78 +340,6 @@
                     <div class="loading">Caricamento transazioni...</div>
                 </div>
             </section>
-
-            <!-- Explorer Section -->
-            <section id="explorer" class="section">
-                <div class="section-header">
-                    <h1>Blockchain Explorer</h1>
-                    <p>Esplora tutti i dati della blockchain</p>
-                </div>
-
-                <div class="explorer-grid">
-                    <div class="explorer-card">
-                        <h3>📈 Statistiche Live</h3>
-                        <div class="live-stats">
-                            <div class="live-stat">
-                                <span class="stat-name">Hash Rate</span>
-                                <span class="stat-value" id="live-hashrate">- H/s</span>
-                            </div>
-                            <div class="live-stat">
-                                <span class="stat-name">TX Pendenti</span>
-                                <span class="stat-value" id="pending-tx">-</span>
-                            </div>
-                            <div class="live-stat">
-                                <span class="stat-name">Ricompensa</span>
-                                <span class="stat-value">10 NVR</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="explorer-card">
-                        <h3>🌐 Network Info</h3>
-                        <div class="network-info">
-                            <div class="info-row">
-                                <label>Server:</label>
-                                <code>novaraserver.onrender.com</code>
-                            </div>
-                            <div class="info-row">
-                                <label>Stato:</label>
-                                <span id="server-status" class="status-online">Connesso</span>
-                            </div>
-                            <div class="info-row">
-                                <label>Ultimo Aggiornamento:</label>
-                                <span id="last-update">-</span>
-                            </div>
-                            <div class="info-row">
-                                <label>Supply Totale:</label>
-                                <span>1,000 NVR</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="api-info">
-                    <h3>🔗 API Endpoints</h3>
-                    <div class="endpoints-list">
-                        <div class="endpoint">
-                            <code>GET /api/info</code>
-                            <span>Statistiche blockchain</span>
-                        </div>
-                        <div class="endpoint">
-                            <code>GET /api/chain</code>
-                            <span>Lista completa blocchi</span>
-                        </div>
-                        <div class="endpoint">
-                            <code>GET /api/balance/:address</code>
-                            <span>Saldo wallet</span>
-                        </div>
-                        <div class="endpoint">
-                            <code>GET /api/transactions/:address</code>
-                            <span>Transazioni wallet</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
         </main>
 
         <!-- Footer -->
@@ -321,7 +347,7 @@
             <div class="footer-content">
                 <div class="footer-info">
                     <span class="footer-logo">⛓️ Novara Coin Explorer</span>
-                    <span>Blockchain Live • Supply Limitato: 1,000 NVR</span>
+                    <span>Wallet & Transazioni • Supply Limitato: 1,000 NVR</span>
                 </div>
                 <div class="footer-stats">
                     <span id="footer-blocks">Blocchi: -</span>
@@ -330,6 +356,60 @@
                 </div>
             </div>
         </footer>
+    </div>
+
+    <!-- Import Wallet Modal -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📥 Importa Wallet</h3>
+                <span class="close" onclick="closeImportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Incolla la tua Private Key per importare un wallet esistente:</p>
+                <textarea 
+                    id="privateKeyInput" 
+                    placeholder="Inserisci la private key qui (64 caratteri esadecimali)..." 
+                    class="modal-input"
+                    rows="4"
+                ></textarea>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeImportModal()">Annulla</button>
+                    <button class="btn btn-primary" onclick="importWallet()">Importa Wallet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Wallet Modal -->
+    <div id="newWalletModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎉 Nuovo Wallet Creato!</h3>
+                <span class="close" onclick="closeNewWalletModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="wallet-details">
+                    <div class="detail-item">
+                        <label>Indirizzo:</label>
+                        <code id="new-wallet-address" class="address-code"></code>
+                        <button onclick="copyToClipboard('new-wallet-address')" class="icon-btn">📋</button>
+                    </div>
+                    <div class="detail-item">
+                        <label>Private Key:</label>
+                        <code id="new-wallet-private" class="private-key"></code>
+                        <button onclick="copyToClipboard('new-wallet-private')" class="icon-btn">📋</button>
+                    </div>
+                </div>
+                <div class="warning-message">
+                    <strong>⚠️ IMPORTANTE:</strong> Salva la Private Key in un luogo sicuro! 
+                    Senza di essa non potrai più accedere al tuo wallet.
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeNewWalletModal()">Ho Salvato la Private Key</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
