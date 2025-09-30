@@ -3,255 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novara Coin (NVR) - Blockchain Reale</title>
+    <title>Novara Coin - Blockchain Explorer</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <nav class="nav">
-            <div class="nav-brand">
-                <span class="logo">⛓️</span>
-                <span class="brand-text">NOVARA COIN</span>
+    <div class="app">
+        <!-- Header Minimal -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">⛓️</span>
+                    Novara Coin
+                </h1>
+                <div class="network-status">
+                    <span class="status-dot" id="status-dot"></span>
+                    <span id="network-status">Connessione...</span>
+                </div>
             </div>
-            <div class="nav-links">
-                <a href="#about">Chi Siamo</a>
-                <a href="#wallet">Wallet</a>
-                <a href="#transactions">Transazioni</a>
-                <a href="#blockchain">Blockchain Live</a>
-                <a href="#download">Download</a>
-            </div>
-        </nav>
-    </header>
+        </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span class="gradient-text">NOVARA COIN</span><br>
-                Blockchain Reale & Live
-            </h1>
-            <p class="hero-subtitle">
-                Connesso alla blockchain Novara su <strong>Render.com</strong><br>
-                Supply limitato a <strong>1000 NVR</strong> - Dati in tempo reale 🔄
-            </p>
-            <div class="hero-buttons">
-                <a href="#download" class="btn btn-primary">
-                    🚀 Scarica Novara Core
-                </a>
-                <a href="#blockchain" class="btn btn-secondary">
-                    ⛓️ Esplora Blockchain
-                </a>
-            </div>
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-number">1,000</div>
-                    <div class="stat-label">Supply Totale</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="current-supply">-</div>
-                    <div class="stat-label">NVR Minati</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="remaining-supply">-</div>
-                    <div class="stat-label">NVR Rimasti</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" id="block-count">-</div>
-                    <div class="stat-label">Blocchi</div>
-                </div>
-            </div>
-        </div>
-        <div class="hero-visual">
-            <div class="live-status">
-                <div class="status-card">
-                    <div class="status-header">
-                        <span>🔴 Stato Blockchain</span>
-                        <div class="status-indicator" id="status-indicator"></div>
-                    </div>
-                    <div class="status-info">
-                        <div class="status-item">
-                            <span>Server:</span>
-                            <code>novaraserver.onrender.com</code>
-                        </div>
-                        <div class="status-item">
-                            <span>Ultimo Blocco:</span>
-                            <span id="last-block-time">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span>Transazioni Pendenti:</span>
-                            <span id="pending-tx">-</span>
-                        </div>
-                        <div class="status-item">
-                            <span>Difficoltà:</span>
-                            <span id="current-difficulty">-</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="section">
-        <div class="container">
-            <h2 class="section-title">Blockchain Novara Reale 🚀</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>
-                        <strong>Novara Coin (NVR)</strong> è una blockchain <strong>REALE</strong> hostata su Render.com 
-                        con API live e dati in tempo reale. Non è una demo!
-                    </p>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">🌐</div>
-                            <h3>API Reale</h3>
-                            <p>Dati live dalla blockchain su Render.com</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">🔗</div>
-                            <h3>WebSocket Live</h3>
-                            <p>Aggiornamenti in tempo reale</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">💰</div>
-                            <h3>Supply Reale</h3>
-                            <p>1000 NVR totali - Contati live</p>
-                        </div>
-                        <div class="feature-card">
-                            <div class="feature-icon">⚡</div>
-                            <h3>Transazioni Vere</h3>
-                            <p>Transazioni reali sulla blockchain</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Wallet Section -->
-    <section id="wallet" class="section bg-dark">
-        <div class="container">
-            <h2 class="section-title">Wallet Reali 👛</h2>
-            <div class="wallet-demo-container">
-                <div class="demo-wallet">
-                    <div class="demo-section">
-                        <h4>🔍 Cerca Wallet sulla Blockchain</h4>
-                        <div class="search-wallet">
-                            <input type="text" id="wallet-search" placeholder="Inserisci indirizzo wallet (es: 1ABC...)" class="form-input">
-                            <button class="btn btn-primary" onclick="searchWallet()">Cerca Wallet</button>
-                        </div>
-                    </div>
-                    
-                    <div id="wallet-result" class="wallet-result" style="display: none;">
-                        <div class="wallet-info">
-                            <div class="info-item">
-                                <label>Indirizzo:</label>
-                                <div class="address-container">
-                                    <code id="result-address">-</code>
-                                    <button class="copy-btn" onclick="copyToClipboard('result-address')">📋</button>
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <label>Saldo:</label>
-                                <div class="balance-amount" id="result-balance">- NVR</div>
-                            </div>
-                            <div class="info-item">
-                                <label>Transazioni:</label>
-                                <div id="result-transactions">-</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Transactions Section -->
-    <section id="transactions" class="section">
-        <div class="container">
-            <h2 class="section-title">Transazioni Reali 💸</h2>
-            <div class="transactions-content">
-                <div class="transaction-explorer">
-                    <h3>Ultime Transazioni sulla Blockchain</h3>
-                    <div id="transactions-list" class="transactions-list">
-                        <!-- Le transazioni verranno caricate qui -->
-                    </div>
-                    <button class="btn btn-secondary" onclick="loadTransactions()">
-                        🔄 Aggiorna Transazioni
-                    </button>
-                </div>
-                
-                <div class="transaction-stats">
-                    <h3>Statistiche Transazioni</h3>
-                    <div class="stats-cards">
-                        <div class="stat-card-small">
-                            <div class="stat-value" id="total-transactions">-</div>
-                            <div class="stat-name">Transazioni Totali</div>
-                        </div>
-                        <div class="stat-card-small">
-                            <div class="stat-value" id="pending-transactions">-</div>
-                            <div class="stat-name">Transazioni Pendenti</div>
-                        </div>
-                        <div class="stat-card-small">
-                            <div class="stat-value" id="avg-transactions">-</div>
-                            <div class="stat-name">Tx per Blocco</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Blockchain Live Section -->
-    <section id="blockchain" class="section bg-dark">
-        <div class="container">
-            <h2 class="section-title">Blockchain Live ⛓️</h2>
-            <div class="blockchain-explorer">
-                <h3>Ultimi Blocchi</h3>
-                <div id="blocks-list" class="blocks-list">
-                    <!-- I blocchi verranno caricati qui -->
-                </div>
-                <button class="btn btn-secondary" onclick="loadBlocks()">
-                    🔄 Aggiorna Blocchi
-                </button>
-            </div>
-            
-            <div class="blockchain-stats">
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Overview Section -->
+            <section class="overview">
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon">📦</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="live-blocks">-</div>
-                            <div class="stat-name">Blocchi Totali</div>
-                        </div>
+                        <div class="stat-label">Supply Totale</div>
+                        <div class="stat-value">1,000</div>
+                        <div class="stat-unit">NVR</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">💸</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="live-transactions">-</div>
-                            <div class="stat-name">Transazioni Totali</div>
-                        </div>
+                        <div class="stat-label">NVR Minati</div>
+                        <div class="stat-value" id="mined-supply">-</div>
+                        <div class="stat-unit">NVR</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">⚡</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="live-hashrate">-</div>
-                            <div class="stat-name">Hash Rate</div>
-                        </div>
+                        <div class="stat-label">Blocchi</div>
+                        <div class="stat-value" id="total-blocks">-</div>
+                        <div class="stat-unit">#</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">🎯</div>
-                        <div class="stat-info">
-                            <div class="stat-value" id="live-difficulty">-</div>
-                            <div class="stat-name">Difficoltà</div>
-                        </div>
+                        <div class="stat-label">Transazioni</div>
+                        <div class="stat-value" id="total-txs">-</div>
+                        <div class="stat-unit">TX</div>
                     </div>
                 </div>
-                
-                <div class="progress-container">
-                    <div class="progress-label">
+
+                <!-- Progress Bar -->
+                <div class="progress-section">
+                    <div class="progress-header">
                         <span>Supply in Circolazione</span>
                         <span id="progress-percent">0%</span>
                     </div>
@@ -259,92 +60,95 @@
                         <div class="progress-fill" id="progress-fill"></div>
                     </div>
                     <div class="progress-numbers">
-                        <span id="mined-nvr">0</span>
+                        <span id="current-mined">0</span>
                         <span>/ 1000 NVR</span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Download Section -->
-    <section id="download" class="section">
-        <div class="container">
-            <h2 class="section-title">Scarica Novara Core 📥</h2>
-            <div class="download-content">
-                <div class="download-info">
-                    <h3>Client Ufficiale Novara Core</h3>
-                    <p>Scarica il client ufficiale per interagire con la blockchain Novara:</p>
-                    <ul>
-                        <li>✅ Gestione wallet reali</li>
-                        <li>✅ Transazioni sulla blockchain</li>
-                        <li>✅ Visualizzazione blocchi in tempo reale</li>
-                        <li>✅ Connessione al server Render.com</li>
-                    </ul>
-                </div>
-                <div class="download-options">
-                    <div class="download-card">
-                        <div class="os-icon">💻</div>
-                        <h3>Windows</h3>
-                        <p>NovaraCore.exe</p>
-                        <a href="#" class="btn btn-download" onclick="alert('Client in sviluppo - Disponibile a breve!')">
-                            📥 Scarica (Soon)
-                        </a>
+            <!-- Explorer Sections -->
+            <div class="explorer-grid">
+                <!-- Wallet Lookup -->
+                <section class="explorer-section">
+                    <h2 class="section-title">🔍 Cerca Wallet</h2>
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="wallet-address" 
+                            placeholder="Inserisci indirizzo wallet (es: 1ABC...)" 
+                            class="search-input"
+                        >
+                        <button onclick="searchWallet()" class="search-btn">Cerca</button>
                     </div>
-                    <div class="download-card">
-                        <div class="os-icon">🍎</div>
-                        <h3>macOS</h3>
-                        <p>NovaraCore.dmg</p>
-                        <a href="#" class="btn btn-download" onclick="alert('Client in sviluppo - Disponibile a breve!')">
-                            📥 Scarica (Soon)
-                        </a>
+                    
+                    <div id="wallet-result" class="result-card hidden">
+                        <div class="result-header">
+                            <h3>Wallet Trovato</h3>
+                            <button onclick="copyToClipboard('result-address')" class="copy-btn">📋</button>
+                        </div>
+                        <div class="result-content">
+                            <div class="info-row">
+                                <label>Indirizzo:</label>
+                                <code id="result-address" class="address"></code>
+                            </div>
+                            <div class="info-row">
+                                <label>Saldo:</label>
+                                <span id="result-balance" class="balance">- NVR</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Transazioni:</label>
+                                <span id="result-tx-count">-</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="download-card">
-                        <div class="os-icon">🐧</div>
-                        <h3>Linux</h3>
-                        <p>NovaraCore.AppImage</p>
-                        <a href="#" class="btn btn-download" onclick="alert('Client in sviluppo - Disponibile a breve!')">
-                            📥 Scarica (Soon)
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+                </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <span class="logo">⛓️</span>
-                    <span class="brand-text">NOVARA COIN</span>
-                    <p>Blockchain Reale - Dati Live</p>
-                </div>
-                <div class="footer-links">
-                    <a href="#about">Blockchain</a>
-                    <a href="#wallet">Wallet</a>
-                    <a href="#transactions">Transazioni</a>
-                    <a href="#blockchain">Esplora</a>
-                    <a href="#download">Download</a>
-                </div>
-                <div class="footer-info">
-                    <div class="server-info">
-                        <strong>Server Blockchain:</strong>
-                        <code>novaraserver.onrender.com</code>
+                <!-- Blockchain Data -->
+                <section class="explorer-section">
+                    <h2 class="section-title">⛓️ Ultimi Blocchi</h2>
+                    <div id="blocks-container" class="data-container">
+                        <div class="loading">Caricamento blocchi...</div>
                     </div>
-                    <div class="api-info">
-                        <strong>API Endpoint:</strong>
-                        <code>/api/info</code>
+                    <button onclick="loadBlocks()" class="refresh-btn">🔄 Aggiorna</button>
+                </section>
+
+                <!-- Transactions -->
+                <section class="explorer-section">
+                    <h2 class="section-title">💸 Transazioni Recenti</h2>
+                    <div id="transactions-container" class="data-container">
+                        <div class="loading">Caricamento transazioni...</div>
+                    </div>
+                    <button onclick="loadTransactions()" class="refresh-btn">🔄 Aggiorna</button>
+                </section>
+            </div>
+
+            <!-- Server Info -->
+            <section class="server-info">
+                <div class="info-card">
+                    <h3>🌐 Server Blockchain</h3>
+                    <div class="server-details">
+                        <div class="detail">
+                            <label>Endpoint:</label>
+                            <code>novaraserver.onrender.com/api</code>
+                        </div>
+                        <div class="detail">
+                            <label>Stato:</label>
+                            <span id="server-status">Connessione in corso...</span>
+                        </div>
+                        <div class="detail">
+                            <label>Ultimo aggiornamento:</label>
+                            <span id="last-update">-</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2024 Novara Coin. Blockchain reale hostata su Render.com</p>
-                <p>Supply limitato: 1000 NVR - Dati in tempo reale dalla blockchain ⚡</p>
-            </div>
-        </div>
-    </footer>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Novara Coin Explorer • Blockchain Reale • Supply: 1,000 NVR</p>
+        </footer>
+    </div>
 
     <script src="script.js"></script>
 </body>
