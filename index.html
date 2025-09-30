@@ -9,135 +9,307 @@
 </head>
 <body>
     <div class="app">
-        <!-- Header Minimal -->
+        <!-- Header con Menu -->
         <header class="header">
-            <div class="header-content">
-                <h1 class="logo">
+            <nav class="nav">
+                <div class="nav-brand">
                     <span class="logo-icon">⛓️</span>
-                    Novara Coin
-                </h1>
-                <div class="network-status">
-                    <span class="status-dot" id="status-dot"></span>
-                    <span id="network-status">Connessione...</span>
+                    <span class="logo-text">Novara Coin</span>
                 </div>
-            </div>
+                
+                <div class="nav-menu">
+                    <a href="#overview" class="nav-link active">
+                        <span class="nav-icon">📊</span>
+                        Overview
+                    </a>
+                    <a href="#explorer" class="nav-link">
+                        <span class="nav-icon">🔍</span>
+                        Explorer
+                    </a>
+                    <a href="#wallet" class="nav-link">
+                        <span class="nav-icon">👛</span>
+                        Wallet
+                    </a>
+                    <a href="#blocks" class="nav-link">
+                        <span class="nav-icon">⛓️</span>
+                        Blocchi
+                    </a>
+                    <a href="#transactions" class="nav-link">
+                        <span class="nav-icon">💸</span>
+                        Transazioni
+                    </a>
+                </div>
+
+                <div class="nav-actions">
+                    <div class="network-status">
+                        <span class="status-dot" id="status-dot"></span>
+                        <span id="network-status">Connessione...</span>
+                    </div>
+                </div>
+            </nav>
         </header>
 
         <!-- Main Content -->
         <main class="main">
             <!-- Overview Section -->
-            <section class="overview">
+            <section id="overview" class="section active">
+                <div class="section-header">
+                    <h1>Blockchain Overview</h1>
+                    <p>Dati in tempo reale dalla blockchain Novara Coin</p>
+                </div>
+
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-label">Supply Totale</div>
-                        <div class="stat-value">1,000</div>
-                        <div class="stat-unit">NVR</div>
+                        <div class="stat-icon">💰</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="mined-supply">-</div>
+                            <div class="stat-label">NVR Minati</div>
+                        </div>
+                        <div class="stat-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="supply-progress"></div>
+                            </div>
+                            <div class="progress-text" id="supply-percent">0%</div>
+                        </div>
                     </div>
+
                     <div class="stat-card">
-                        <div class="stat-label">NVR Minati</div>
-                        <div class="stat-value" id="mined-supply">-</div>
-                        <div class="stat-unit">NVR</div>
+                        <div class="stat-icon">⛓️</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-blocks">-</div>
+                            <div class="stat-label">Blocchi Totali</div>
+                        </div>
+                        <div class="stat-trend">
+                            <span class="trend-up">↗️ Live</span>
+                        </div>
                     </div>
+
                     <div class="stat-card">
-                        <div class="stat-label">Blocchi</div>
-                        <div class="stat-value" id="total-blocks">-</div>
-                        <div class="stat-unit">#</div>
+                        <div class="stat-icon">💸</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-txs">-</div>
+                            <div class="stat-label">Transazioni</div>
+                        </div>
+                        <div class="stat-trend">
+                            <span class="trend-up">↗️ Live</span>
+                        </div>
                     </div>
+
                     <div class="stat-card">
-                        <div class="stat-label">Transazioni</div>
-                        <div class="stat-value" id="total-txs">-</div>
-                        <div class="stat-unit">TX</div>
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="current-difficulty">-</div>
+                            <div class="stat-label">Difficoltà</div>
+                        </div>
+                        <div class="stat-trend">
+                            <span class="trend-neutral">⚡ PoW</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Progress Bar -->
-                <div class="progress-section">
-                    <div class="progress-header">
-                        <span>Supply in Circolazione</span>
-                        <span id="progress-percent">0%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progress-fill"></div>
-                    </div>
-                    <div class="progress-numbers">
-                        <span id="current-mined">0</span>
-                        <span>/ 1000 NVR</span>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h3>Azioni Rapide</h3>
+                    <div class="actions-grid">
+                        <button class="action-btn" onclick="showSection('wallet')">
+                            <span class="action-icon">🔍</span>
+                            <span class="action-text">Cerca Wallet</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('blocks')">
+                            <span class="action-icon">⛓️</span>
+                            <span class="action-text">Ultimi Blocchi</span>
+                        </button>
+                        <button class="action-btn" onclick="showSection('transactions')">
+                            <span class="action-icon">💸</span>
+                            <span class="action-text">Transazioni</span>
+                        </button>
+                        <button class="action-btn" onclick="refreshAllData()">
+                            <span class="action-icon">🔄</span>
+                            <span class="action-text">Aggiorna Tutto</span>
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <!-- Explorer Sections -->
-            <div class="explorer-grid">
-                <!-- Wallet Lookup -->
-                <section class="explorer-section">
-                    <h2 class="section-title">🔍 Cerca Wallet</h2>
+            <!-- Wallet Explorer Section -->
+            <section id="wallet" class="section">
+                <div class="section-header">
+                    <h1>Wallet Explorer</h1>
+                    <p>Cerca e analizza wallet sulla blockchain</p>
+                </div>
+
+                <div class="search-container">
                     <div class="search-box">
-                        <input 
-                            type="text" 
-                            id="wallet-address" 
-                            placeholder="Inserisci indirizzo wallet (es: 1ABC...)" 
-                            class="search-input"
-                        >
-                        <button onclick="searchWallet()" class="search-btn">Cerca</button>
+                        <div class="search-input-group">
+                            <span class="search-icon">👛</span>
+                            <input 
+                                type="text" 
+                                id="wallet-address" 
+                                placeholder="Inserisci indirizzo wallet (es: foundation...)" 
+                                class="search-input"
+                            >
+                        </div>
+                        <button onclick="searchWallet()" class="search-btn">
+                            <span class="btn-icon">🔍</span>
+                            Cerca Wallet
+                        </button>
+                    </div>
+                </div>
+
+                <div id="wallet-result" class="result-card hidden">
+                    <div class="result-header">
+                        <h3>📋 Dettagli Wallet</h3>
+                        <div class="result-actions">
+                            <button onclick="copyToClipboard('result-address')" class="icon-btn" title="Copia indirizzo">
+                                📋
+                            </button>
+                            <button onclick="loadWalletTransactions()" class="icon-btn" title="Carica transazioni">
+                                🔄
+                            </button>
+                        </div>
                     </div>
                     
-                    <div id="wallet-result" class="result-card hidden">
-                        <div class="result-header">
-                            <h3>Wallet Trovato</h3>
-                            <button onclick="copyToClipboard('result-address')" class="copy-btn">📋</button>
-                        </div>
-                        <div class="result-content">
-                            <div class="info-row">
+                    <div class="result-content">
+                        <div class="info-grid">
+                            <div class="info-item">
                                 <label>Indirizzo:</label>
-                                <code id="result-address" class="address"></code>
+                                <code id="result-address" class="address-code">-</code>
                             </div>
-                            <div class="info-row">
+                            <div class="info-item">
                                 <label>Saldo:</label>
-                                <span id="result-balance" class="balance">- NVR</span>
+                                <span id="result-balance" class="balance-amount">- NVR</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Transazioni:</label>
+                                <span id="result-tx-count" class="tx-count">-</span>
+                            </div>
+                            <div class="info-item">
+                                <label>Stato:</label>
+                                <span class="status-badge active">Attivo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="wallet-transactions" class="transactions-list hidden">
+                        <h4>Ultime Transazioni</h4>
+                        <div id="wallet-tx-container" class="data-container">
+                            <!-- Transazioni del wallet -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="wallet-examples">
+                    <h4>Wallet Esempio (prova questi):</h4>
+                    <div class="example-addresses">
+                        <button class="example-btn" onclick="fillExample('foundation')">
+                            foundation (Genesis)
+                        </button>
+                        <button class="example-btn" onclick="fillExample('miner1')">
+                            miner1 (Mining)
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blocks Section -->
+            <section id="blocks" class="section">
+                <div class="section-header">
+                    <h1>Blocchi Recenti</h1>
+                    <p>Ultimi blocchi aggiunti alla blockchain</p>
+                    <button onclick="loadBlocks()" class="refresh-btn">
+                        <span class="btn-icon">🔄</span>
+                        Aggiorna
+                    </button>
+                </div>
+
+                <div id="blocks-container" class="cards-container">
+                    <div class="loading">Caricamento blocchi...</div>
+                </div>
+            </section>
+
+            <!-- Transactions Section -->
+            <section id="transactions" class="section">
+                <div class="section-header">
+                    <h1>Transazioni Recenti</h1>
+                    <p>Ultime transazioni sulla blockchain</p>
+                    <button onclick="loadTransactions()" class="refresh-btn">
+                        <span class="btn-icon">🔄</span>
+                        Aggiorna
+                    </button>
+                </div>
+
+                <div id="transactions-container" class="cards-container">
+                    <div class="loading">Caricamento transazioni...</div>
+                </div>
+            </section>
+
+            <!-- Explorer Section -->
+            <section id="explorer" class="section">
+                <div class="section-header">
+                    <h1>Blockchain Explorer</h1>
+                    <p>Esplora tutti i dati della blockchain</p>
+                </div>
+
+                <div class="explorer-grid">
+                    <div class="explorer-card">
+                        <h3>📈 Statistiche Live</h3>
+                        <div class="live-stats">
+                            <div class="live-stat">
+                                <span class="stat-name">Hash Rate</span>
+                                <span class="stat-value" id="live-hashrate">- H/s</span>
+                            </div>
+                            <div class="live-stat">
+                                <span class="stat-name">TX Pendenti</span>
+                                <span class="stat-value" id="pending-tx">-</span>
+                            </div>
+                            <div class="live-stat">
+                                <span class="stat-name">Ricompensa</span>
+                                <span class="stat-value">10 NVR</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="explorer-card">
+                        <h3>🌐 Network Info</h3>
+                        <div class="network-info">
+                            <div class="info-row">
+                                <label>Server:</label>
+                                <code>novaraserver.onrender.com</code>
                             </div>
                             <div class="info-row">
-                                <label>Transazioni:</label>
-                                <span id="result-tx-count">-</span>
+                                <label>Stato:</label>
+                                <span id="server-status" class="status-online">Connesso</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Ultimo Aggiornamento:</label>
+                                <span id="last-update">-</span>
+                            </div>
+                            <div class="info-row">
+                                <label>Supply Totale:</label>
+                                <span>1,000 NVR</span>
                             </div>
                         </div>
                     </div>
-                </section>
+                </div>
 
-                <!-- Blockchain Data -->
-                <section class="explorer-section">
-                    <h2 class="section-title">⛓️ Ultimi Blocchi</h2>
-                    <div id="blocks-container" class="data-container">
-                        <div class="loading">Caricamento blocchi...</div>
-                    </div>
-                    <button onclick="loadBlocks()" class="refresh-btn">🔄 Aggiorna</button>
-                </section>
-
-                <!-- Transactions -->
-                <section class="explorer-section">
-                    <h2 class="section-title">💸 Transazioni Recenti</h2>
-                    <div id="transactions-container" class="data-container">
-                        <div class="loading">Caricamento transazioni...</div>
-                    </div>
-                    <button onclick="loadTransactions()" class="refresh-btn">🔄 Aggiorna</button>
-                </section>
-            </div>
-
-            <!-- Server Info -->
-            <section class="server-info">
-                <div class="info-card">
-                    <h3>🌐 Server Blockchain</h3>
-                    <div class="server-details">
-                        <div class="detail">
-                            <label>Endpoint:</label>
-                            <code>novaraserver.onrender.com/api</code>
+                <div class="api-info">
+                    <h3>🔗 API Endpoints</h3>
+                    <div class="endpoints-list">
+                        <div class="endpoint">
+                            <code>GET /api/info</code>
+                            <span>Statistiche blockchain</span>
                         </div>
-                        <div class="detail">
-                            <label>Stato:</label>
-                            <span id="server-status">Connessione in corso...</span>
+                        <div class="endpoint">
+                            <code>GET /api/chain</code>
+                            <span>Lista completa blocchi</span>
                         </div>
-                        <div class="detail">
-                            <label>Ultimo aggiornamento:</label>
-                            <span id="last-update">-</span>
+                        <div class="endpoint">
+                            <code>GET /api/balance/:address</code>
+                            <span>Saldo wallet</span>
+                        </div>
+                        <div class="endpoint">
+                            <code>GET /api/transactions/:address</code>
+                            <span>Transazioni wallet</span>
                         </div>
                     </div>
                 </div>
@@ -146,7 +318,17 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Novara Coin Explorer • Blockchain Reale • Supply: 1,000 NVR</p>
+            <div class="footer-content">
+                <div class="footer-info">
+                    <span class="footer-logo">⛓️ Novara Coin Explorer</span>
+                    <span>Blockchain Live • Supply Limitato: 1,000 NVR</span>
+                </div>
+                <div class="footer-stats">
+                    <span id="footer-blocks">Blocchi: -</span>
+                    <span id="footer-supply">Supply: -/1000 NVR</span>
+                    <span id="footer-txs">Transazioni: -</span>
+                </div>
+            </div>
         </footer>
     </div>
 
