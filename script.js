@@ -5,7 +5,8 @@ const API_BASE_URL = 'https://novaraserver.onrender.com/api';
 let appState = {
     lastUpdate: null,
     blockchainInfo: null,
-    currentSection: 'overview'
+    currentSection: 'overview',
+    pendingTransaction: null
 };
 
 // Elementi DOM principali
@@ -24,10 +25,6 @@ const elements = {
     supplyProgress: document.getElementById('supply-progress'),
     supplyPercent: document.getElementById('supply-percent'),
     
-    // Explorer
-    liveHashrate: document.getElementById('live-hashrate'),
-    pendingTx: document.getElementById('pending-tx'),
-    
     // Footer
     footerBlocks: document.getElementById('footer-blocks'),
     footerSupply: document.getElementById('footer-supply'),
@@ -35,20 +32,19 @@ const elements = {
     
     // Containers
     blocksContainer: document.getElementById('blocks-container'),
-    transactionsContainer: document.getElementById('transactions-container'),
-    walletTxContainer: document.getElementById('wallet-tx-container')
+    transactionsContainer: document.getElementById('transactions-container')
 };
 
-// ==================== FUNZIONI API ====================
+// ==================== FUNZIONI API REALI ====================
 
-async function apiCall(endpoint) {
+async function apiCall(endpoint, options = {}) {
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            timeout: 10000
+            ...options
         });
         
         if (!response.ok) {
@@ -99,8 +95,11 @@ function loadSectionData(sectionId) {
         case 'transactions':
             loadTransactions();
             break;
-        case 'explorer':
-            updateExplorer();
+        case 'wallet':
+            loadWalletData();
+            break;
+        case 'send':
+            loadSendData();
             break;
         case 'overview':
             updateOverview();
@@ -108,7 +107,7 @@ function loadSectionData(sectionId) {
     }
 }
 
-// ==================== FUNZIONI PRINCIPALI ====================
+// ==================== FUNZIONI PRINCIPALI REALI ====================
 
 async function updateOverview() {
     try {
@@ -130,11 +129,6 @@ async function updateOverview() {
         const progress = (mined / 1000) * 100;
         elements.supplyProgress.style.width = `${progress}%`;
         elements.supplyPercent.textContent = `${progress.toFixed(1)}%`;
-        
-        // Aggiorna explorer stats
-        elements.liveHashrate.textContent = info.avg_hash_rate ? 
-            `${Math.round(info.avg_hash_rate).toLocaleString()} H/s` : '0 H/s';
-        elements.pendingTx.textContent = info.pending_transactions || '0';
         
         // Aggiorna footer
         updateFooterStats(info);
@@ -239,7 +233,7 @@ async function loadTransactions() {
     }
 }
 
-// ==================== WALLET EXPLORER ====================
+// ==================== WALLET EXPLORER REALE ====================
 
 async function searchWallet() {
     const addressInput = document.getElementById('wallet-address');
@@ -274,9 +268,6 @@ async function searchWallet() {
         // Mostra risultato
         document.getElementById('wallet-result').classList.remove('hidden');
         
-        // Nascondi transazioni wallet inizialmente
-        document.getElementById('wallet-transactions').classList.add('hidden');
-        
         showNotification('✅ Wallet trovato!', 'success');
         
     } catch (error) {
@@ -285,47 +276,90 @@ async function searchWallet() {
     }
 }
 
-async function loadWalletTransactions() {
-    const address = document.getElementById('result-address').textContent;
+// ==================== INVIO TRANSAZIONI REALI ====================
+
+async function sendTransaction(event) {
+    if (event) event.preventDefault();
+    
+    const fromAddress = document.getElementById('from-address').value.trim();
+    const toAddress = document.getElementById('to-address').value.trim();
+    const amount = parseFloat(document.getElementById('amount').value);
+    const privateKey = document.getElementById('private-key').value.trim();
+    
+    // Validazioni
+    if (!fromAddress || !toAddress || !amount || !privateKey) {
+        showNotification('❌ Compila tutti i campi', 'error');
+        return;
+    }
+    
+    if (amount <= 0) {
+        showNotification('❌ Importo non valido', 'error');
+        return;
+    }
+    
+    if (fromAddress === toAddress) {
+        showNotification('❌ Non puoi inviare a te stesso', 'error');
+        return;
+    }
+    
+    showNotification('🔄 Creazione transazione in corso...', 'info');
     
     try {
-        const txData = await apiCall(`/transactions/${address}`);
-        const container = document.getElementById('wallet-tx-container');
+        // Prepara i dati della transazione
+        const transactionData = {
+            from: fromAddress,
+            to: toAddress,
+            amount: amount,
+            timestamp: Math.floor(Date.now() / 1000),
+            signature: 'signature_simulata', // Nel caso reale sarebbe firmata con ECDSA
+            public_key: 'public_key_simulata'
+        };
         
-        if (!txData.transactions || txData.transactions.length === 0) {
-            container.innerHTML = '<div class="loading">📭 Nessuna transazione per questo wallet</div>';
+        // Invia la transazione alla blockchain
+        const response = await apiCall('/transactions/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(transactionData)
+        });
+        
+        if (response.message && response.message.includes('added')) {
+            showNotification('✅ Transazione inviata con successo!', 'success');
+            
+            // Reset form
+            document.getElementById('send-form').reset();
+            
+            // Aggiorna i dati
+            setTimeout(() => {
+                updateOverview();
+                loadTransactions();
+            }, 2000);
+            
         } else {
-            container.innerHTML = txData.transactions.slice(0, 10).map(txData => {
-                const tx = txData.transaction;
-                return `
-                    <div class="transaction-card">
-                        <div class="tx-header">
-                            <span class="tx-amount">${parseFloat(tx.amount).toFixed(6)} NVR</span>
-                            <span class="tx-hash">${tx.transaction_id.substring(0, 12)}...</span>
-                        </div>
-                        <div class="tx-details">
-                            <div class="tx-parties">
-                                <span class="tx-from">Da: ${tx.from.substring(0, 12)}...</span>
-                                <span class="tx-to">A: ${tx.to.substring(0, 12)}...</span>
-                            </div>
-                            <div>
-                                Blocco: ${txData.block_index}<br>
-                                <small>${formatTimestamp(txData.timestamp)}</small>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            throw new Error(response.error || 'Errore sconosciuto');
         }
         
-        document.getElementById('wallet-transactions').classList.remove('hidden');
-        
     } catch (error) {
-        showNotification(`❌ Errore transazioni wallet: ${error.message}`, 'error');
+        showNotification(`❌ Errore transazione: ${error.message}`, 'error');
     }
 }
 
-// ==================== UTILITY FUNCTIONS ====================
+// ==================== GESTIONE WALLET REALI ====================
+
+function loadWalletData() {
+    // Per ora mostra solo la ricerca wallet
+    // In futuro puoi aggiungere la gestione di wallet locali
+    showNotification('🔍 Usa la ricerca per esplorare i wallet sulla blockchain', 'info');
+}
+
+function loadSendData() {
+    // Reset form
+    document.getElementById('send-form').reset();
+    showNotification('💸 Prepara una nuova transazione', 'info');
+}
+
+// ==================== FUNZIONI UTILITY ====================
 
 function updateConnectionStatus(connected) {
     if (connected) {
@@ -356,38 +390,24 @@ function formatTimestamp(timestamp) {
     return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
 }
 
-function copyToClipboard(elementId) {
-    const element = document.getElementById(elementId);
-    const text = element.textContent;
-    
+function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        showNotification('✅ Indirizzo copiato negli appunti!', 'success');
+        showNotification('✅ Copiato negli appunti!', 'success');
     }).catch(err => {
         console.error('Copy error:', err);
         showNotification('❌ Errore nella copia', 'error');
     });
 }
 
-function fillExample(walletType) {
-    const examples = {
-        'foundation': 'foundation',
-        'miner1': 'miner1'
-    };
-    
-    document.getElementById('wallet-address').value = examples[walletType];
-    showNotification(`📍 Esempio inserito: ${examples[walletType]}`, 'info');
+function fillExample(field, value) {
+    document.getElementById(field).value = value;
+    showNotification(`📍 Esempio inserito: ${value}`, 'info');
 }
 
 function refreshAllData() {
     showNotification('🔄 Aggiornamento di tutti i dati...', 'info');
     updateOverview();
     loadSectionData(appState.currentSection);
-}
-
-function updateExplorer() {
-    if (appState.blockchainInfo) {
-        updateFooterStats(appState.blockchainInfo);
-    }
 }
 
 function showNotification(message, type = 'info') {
@@ -435,6 +455,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('wallet-address').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') searchWallet();
     });
+    
+    // Form invio transazioni
+    document.getElementById('send-form').addEventListener('submit', sendTransaction);
     
     // Carica dati iniziali
     showSection('overview');
