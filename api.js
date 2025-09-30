@@ -1,5 +1,5 @@
-// Configurazione API per la tua blockchain su Render.com
-class NovaraAPI {
+// API per connettersi alla blockchain Novara Coin REALE
+class NovaraBlockchainAPI {
     constructor() {
         this.baseURL = 'https://novaraserver.onrender.com/api';
         this.websocketURL = 'wss://novaraserver.onrender.com';
@@ -10,7 +10,10 @@ class NovaraAPI {
     // Test connessione al server
     async testConnection() {
         try {
-            const response = await fetch(`${this.baseURL}/health`);
+            const response = await fetch(`${this.baseURL}/health`, {
+                method: 'GET',
+                timeout: 10000
+            });
             return response.status === 200;
         } catch (error) {
             console.error('Errore connessione server:', error);
@@ -35,13 +38,13 @@ class NovaraAPI {
             const response = await fetch(`${this.baseURL}/balance/${address}`);
             if (!response.ok) throw new Error('Indirizzo non trovato');
             const data = await response.json();
-            return data.balance;
+            return parseFloat(data.balance);
         } catch (error) {
             throw new Error(`Errore recupero saldo: ${error.message}`);
         }
     }
 
-    // Invia transazione REALE
+    // Invia transazione REALE alla blockchain
     async sendTransaction(transactionData) {
         try {
             const response = await fetch(`${this.baseURL}/transactions/new`, {
@@ -55,9 +58,16 @@ class NovaraAPI {
             const result = await response.json();
             
             if (response.status === 201) {
-                return { success: true, data: result };
+                return { 
+                    success: true, 
+                    data: result,
+                    transactionId: result.transaction_id || 'unknown'
+                };
             } else {
-                return { success: false, error: result.error };
+                return { 
+                    success: false, 
+                    error: result.error || 'Errore sconosciuto'
+                };
             }
         } catch (error) {
             throw new Error(`Errore invio transazione: ${error.message}`);
@@ -70,7 +80,7 @@ class NovaraAPI {
             const response = await fetch(`${this.baseURL}/transactions/${address}`);
             if (!response.ok) throw new Error('Errore server');
             const data = await response.json();
-            return data.transactions;
+            return data.transactions || [];
         } catch (error) {
             throw new Error(`Errore recupero transazioni: ${error.message}`);
         }
@@ -82,7 +92,7 @@ class NovaraAPI {
             const response = await fetch(`${this.baseURL}/chain`);
             if (!response.ok) throw new Error('Errore server');
             const data = await response.json();
-            return data.chain;
+            return data.chain || [];
         } catch (error) {
             throw new Error(`Errore recupero blockchain: ${error.message}`);
         }
@@ -94,14 +104,18 @@ class NovaraAPI {
             this.socket = new WebSocket(this.websocketURL);
             
             this.socket.onopen = () => {
-                console.log('🔗 WebSocket connesso alla blockchain');
+                console.log('🔗 WebSocket connesso alla blockchain Novara Coin');
                 this.isConnected = true;
                 if (onMessage) onMessage({ type: 'connected', message: 'Connesso alla blockchain' });
             };
 
             this.socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (onMessage) onMessage(data);
+                try {
+                    const data = JSON.parse(event.data);
+                    if (onMessage) onMessage(data);
+                } catch (error) {
+                    console.error('Errore parsing messaggio WebSocket:', error);
+                }
             };
 
             this.socket.onclose = () => {
@@ -131,4 +145,4 @@ class NovaraAPI {
 }
 
 // Istanza globale delle API
-const novaraAPI = new NovaraAPI();
+const blockchainAPI = new NovaraBlockchainAPI();
