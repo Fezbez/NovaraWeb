@@ -7,8 +7,8 @@
     <link rel="stylesheet" href="style.css">
     
     <!-- Librerie ECDSA secp256k1 REALI -->
-    <script src="lib/elliptic.min.js"></script>
-    <script src="lib/js-sha3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/elliptic/6.5.4/elliptic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha3/0.8.0/sha3.min.js"></script>
     <script src="lib/base58.js"></script>
 </head>
 <body>
@@ -72,19 +72,19 @@
                             <div class="address-label">Il Tuo Indirizzo Novara Coin</div>
                             <div class="address-display" id="walletAddress">
                                 <span id="currentAddress">Crea o importa un wallet</span>
-                                <button class="copy-btn" onclick="copyAddress()">📋</button>
+                                <button class="copy-btn" id="copyAddressBtn">📋</button>
                             </div>
                         </div>
                     </div>
 
                     <div class="wallet-actions">
-                        <button class="btn btn-primary" onclick="createWallet()">
+                        <button class="btn btn-primary" id="createWalletBtn">
                             🆕 Nuovo Wallet
                         </button>
-                        <button class="btn btn-secondary" onclick="showImportDialog()">
+                        <button class="btn btn-secondary" id="importWalletBtn">
                             📥 Importa Wallet
                         </button>
-                        <button class="btn btn-outline" onclick="showPrivateKey()">
+                        <button class="btn btn-outline" id="showPrivateKeyBtn">
                             🔑 Mostra Private Key
                         </button>
                     </div>
@@ -163,14 +163,14 @@
                             <div class="address-large" id="receiveAddress">
                                 Crea un wallet per ricevere NVR
                             </div>
-                            <button class="btn btn-outline" onclick="copyReceiveAddress()">
+                            <button class="btn btn-outline" id="copyReceiveBtn">
                                 📋 Copia Indirizzo
                             </button>
                         </div>
                     </div>
 
                     <div class="share-options">
-                        <button class="btn btn-secondary" onclick="shareAddress()">
+                        <button class="btn btn-secondary" id="shareAddressBtn">
                             📤 Condividi Indirizzo
                         </button>
                     </div>
@@ -217,8 +217,8 @@
             <p>Incolla la tua Private Key (64 caratteri esadecimali):</p>
             <textarea id="privateKeyInput" placeholder="Inserisci la private key esadecimale di 64 caratteri..." rows="3"></textarea>
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closeImportModal()">Annulla</button>
-                <button class="btn btn-primary" onclick="importWallet()">Importa Wallet</button>
+                <button class="btn btn-secondary" id="cancelImportBtn">Annulla</button>
+                <button class="btn btn-primary" id="confirmImportBtn">Importa Wallet</button>
             </div>
         </div>
     </div>
@@ -232,8 +232,8 @@
             </div>
             <div class="private-key-display" id="privateKeyDisplay"></div>
             <div class="modal-actions">
-                <button class="btn btn-success" onclick="copyPrivateKey()">📋 Copia Private Key</button>
-                <button class="btn btn-secondary" onclick="closePrivateKeyModal()">Chiudi</button>
+                <button class="btn btn-success" id="copyPrivateKeyBtn">📋 Copia Private Key</button>
+                <button class="btn btn-secondary" id="closePrivateKeyBtn">Chiudi</button>
             </div>
         </div>
     </div>
@@ -244,7 +244,7 @@
         <div class="loading-text">Connessione alla blockchain...</div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Scripts - ORDINE CORRETTO -->
     <script src="wallet.js"></script>
     <script src="api.js"></script>
     <script src="transactions.js"></script>
