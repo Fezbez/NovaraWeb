@@ -7,6 +7,8 @@ class NovaraApp {
     }
 
     async init() {
+        console.log('🚀 Inizializzazione Novara Coin Wallet');
+        
         // Inizializza l'app
         this.setupEventListeners();
         this.setupNavigation();
@@ -15,16 +17,20 @@ class NovaraApp {
         await this.testConnection();
         
         // Aggiorna dati iniziali
-        this.refreshData();
+        await this.refreshData();
         
         // Connetti WebSocket per aggiornamenti real-time
-        novaraAPI.connectWebSocket(this.handleWebSocketMessage.bind(this));
+        blockchainAPI.connectWebSocket(this.handleWebSocketMessage.bind(this));
+        
+        console.log('✅ Novara Coin Wallet pronto');
     }
 
     // Setup event listeners
     setupEventListeners() {
         // Form invio transazione
-        document.getElementById('sendForm').addEventListener('submit', this.handleSendTransaction.bind(this));
+        document.getElementById('sendForm').addEventListener('submit', (e) => {
+            this.handleSendTransaction(e);
+        });
         
         // Filtri cronologia
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -39,6 +45,13 @@ class NovaraApp {
                 this.refreshData();
             }
         });
+        
+        // Aggiorna ogni 30 secondi
+        setInterval(() => {
+            if (this.isOnline) {
+                this.refreshData();
+            }
+        }, 30000);
     }
 
     // Setup navigazione
@@ -68,19 +81,23 @@ class NovaraApp {
         if (tabName === 'history') {
             this.updateBlockchainStats();
         }
+        
+        if (tabName === 'receive' && walletManager.currentWallet) {
+            this.generateQRCode();
+        }
     }
 
     // Test connessione al server
     async testConnection() {
-        this.showLoading(true);
+        this.showLoading(true, 'Connessione alla blockchain...');
         
         try {
-            const isConnected = await novaraAPI.testConnection();
+            const isConnected = await blockchainAPI.testConnection();
             this.updateConnectionStatus(isConnected);
             
             if (isConnected) {
                 this.isOnline = true;
-                console.log('✅ Connesso alla blockchain Novara Coin');
+                this.showNotification('✅ Connesso alla blockchain Novara Coin');
             } else {
                 throw new Error('Server non raggiungibile');
             }
@@ -103,32 +120,35 @@ class NovaraApp {
         if (connected) {
             statusDot.className = 'status-dot connected';
             statusText.textContent = 'Connesso';
+            statusElement.style.color = '#10b981';
         } else {
             statusDot.className = 'status-dot error';
             statusText.textContent = 'Disconnesso';
+            statusElement.style.color = '#ef4444';
         }
     }
 
     // Gestisci messaggi WebSocket
     handleWebSocketMessage(data) {
-        console.log('WebSocket message:', data);
+        console.log('📡 WebSocket:', data);
         
         switch (data.type) {
             case 'connected':
                 this.updateConnectionStatus(true);
+                this.isOnline = true;
                 break;
                 
             case 'blockchain_update':
                 if (data.subtype === 'new_block' || data.subtype === 'new_transaction') {
                     this.refreshData();
-                    this.showNotification('Aggiornamento blockchain', 'Nuova attività rilevata');
+                    this.showNotification('🔄 Blockchain aggiornata', 'Nuova attività rilevata');
                 }
                 break;
                 
             case 'balance_update':
                 if (data.miner_address === walletManager.currentWallet?.address) {
                     this.refreshBalance();
-                    this.showNotification('Saldo aggiornato', `+${data.reward} NVR ricevuti!`);
+                    this.showNotification('💰 Saldo aggiornato', `+${data.reward} NVR ricevuti!`);
                 }
                 break;
         }
@@ -141,7 +161,7 @@ class NovaraApp {
         try {
             await this.refreshBalance();
             await transactionManager.updateTransactions();
-            await this.updateWalletList();
+            this.updateWalletList();
         } catch (error) {
             console.error('Errore aggiornamento dati:', error);
         }
@@ -152,7 +172,7 @@ class NovaraApp {
         if (!walletManager.currentWallet) return;
         
         try {
-            const balance = await novaraAPI.getBalance(walletManager.currentWallet.address);
+            const balance = await blockchainAPI.getBalance(walletManager.currentWallet.address);
             walletManager.updateBalance(walletManager.currentWallet.address, balance);
             this.updateBalanceDisplay(balance);
         } catch (error) {
@@ -184,17 +204,19 @@ class NovaraApp {
         const wallets = walletManager.getWalletList();
         
         if (wallets.length === 0) {
-            container.innerHTML = '<div class="text-center" style="color: var(--text-muted); padding: 20px;">Nessun wallet creato</div>';
+            container.innerHTML = '<div class="empty-state">Nessun wallet creato</div>';
             return;
         }
 
         container.innerHTML = wallets.map(wallet => `
-            <div class="wallet-item" onclick="selectWallet('${wallet.address}')">
-                <div class="transaction-details">
-                    <div class="transaction-address">${this.shortenAddress(wallet.address)}</div>
-                    <div class="transaction-time">Creato: ${new Date(wallet.created).toLocaleDateString('it-IT')}</div>
+            <div class="wallet-item ${wallet.address === walletManager.currentWallet?.address ? 'active' : ''}" 
+                 onclick="selectWallet('${wallet.address}')">
+                <div class="wallet-icon">👛</div>
+                <div class="wallet-details">
+                    <div class="wallet-address">${this.shortenAddress(wallet.address)}</div>
+                    <div class="wallet-created">Creato: ${new Date(wallet.created).toLocaleDateString('it-IT')}</div>
                 </div>
-                <div class="transaction-amount positive">${wallet.balance.toFixed(6)} NVR</div>
+                <div class="wallet-balance">${parseFloat(wallet.balance).toFixed(6)} NVR</div>
             </div>
         `).join('');
     }
@@ -205,7 +227,7 @@ class NovaraApp {
         if (!container) return;
 
         try {
-            const info = await novaraAPI.getBlockchainInfo();
+            const info = await blockchainAPI.getBlockchainInfo();
             
             container.innerHTML = `
                 <div class="stat-item">
@@ -234,7 +256,7 @@ class NovaraApp {
                 </div>
             `;
         } catch (error) {
-            container.innerHTML = '<div class="text-center" style="color: var(--text-muted);">Errore caricamento statistiche</div>';
+            container.innerHTML = '<div class="empty-state">Errore caricamento statistiche</div>';
         }
     }
 
@@ -256,47 +278,78 @@ class NovaraApp {
         const amount = parseFloat(document.getElementById('amount').value);
 
         // Validazione
-        if (!toAddress) {
-            this.showError('Inserisci l\'indirizzo destinatario');
-            return;
-        }
-
-        if (!toAddress.startsWith('1') || toAddress.length < 26) {
-            this.showError('Indirizzo destinatario non valido');
-            return;
-        }
-
-        if (!amount || amount <= 0) {
-            this.showError('Importo non valido');
+        const validationError = this.validateTransaction(toAddress, amount);
+        if (validationError) {
+            this.showError(validationError);
             return;
         }
 
         try {
-            this.showLoading(true, 'Invio transazione...');
+            this.showLoading(true, 'Firma e invio transazione...');
 
-            // Firma la transazione
+            // Firma la transazione (ECDSA secp256k1 REALE)
             const transactionData = walletManager.signTransaction(toAddress, amount);
             
             if (!transactionData) {
                 throw new Error('Errore nella firma della transazione');
             }
 
-            // Invia alla blockchain
-            const result = await novaraAPI.sendTransaction(transactionData);
+            // Verifica locale della firma
+            const isSignatureValid = walletManager.verifyTransactionSignature(transactionData);
+            if (!isSignatureValid) {
+                throw new Error('Firma transazione non valida');
+            }
+
+            // Aggiungi transazione pending per feedback immediato
+            const pendingTxId = transactionManager.addPendingTransaction(transactionData);
+
+            // Invia alla blockchain REALE
+            const result = await blockchainAPI.sendTransaction(transactionData);
             
             if (result.success) {
-                this.showSuccess('Transazione inviata con successo!');
+                this.showSuccess('✅ Transazione inviata con successo!');
                 document.getElementById('sendForm').reset();
-                this.refreshData();
+                
+                // Rimuovi pending e aggiorna con dati reali
+                transactionManager.removePendingTransaction(pendingTxId);
+                await this.refreshData();
+                
             } else {
-                throw new Error(result.error);
+                throw new Error(result.error || 'Errore sconosciuto dal server');
             }
             
         } catch (error) {
-            this.showError(`Errore invio transazione: ${error.message}`);
+            console.error('Errore invio transazione:', error);
+            this.showError(`❌ Errore: ${error.message}`);
         } finally {
             this.showLoading(false);
         }
+    }
+
+    // Valida transazione
+    validateTransaction(toAddress, amount) {
+        if (!toAddress) {
+            return 'Inserisci l\'indirizzo destinatario';
+        }
+
+        if (!walletManager.validateAddress(toAddress)) {
+            return 'Indirizzo destinatario non valido';
+        }
+
+        if (!amount || amount <= 0) {
+            return 'Importo non valido';
+        }
+
+        if (amount > 1000) {
+            return 'Importo troppo elevato (max 1000 NVR)';
+        }
+
+        // Verifica che non stia inviando a se stesso
+        if (toAddress === walletManager.currentWallet.address) {
+            return 'Non puoi inviare NVR a te stesso';
+        }
+
+        return null;
     }
 
     // Gestisci cambio filtro
@@ -305,8 +358,21 @@ class NovaraApp {
             btn.classList.toggle('active', btn.dataset.filter === filter);
         });
         
-        // Qui puoi implementare il filtraggio delle transazioni
-        console.log('Filtro attivo:', filter);
+        transactionManager.filterTransactions(filter);
+    }
+
+    // Genera QR Code
+    generateQRCode() {
+        // Implementazione semplificata QR Code
+        const qrContainer = document.getElementById('qrCode');
+        if (qrContainer && walletManager.currentWallet) {
+            qrContainer.innerHTML = `
+                <div class="qr-placeholder">
+                    📱
+                    <div>QR Code per: ${walletManager.currentWallet.address.substring(0, 8)}...</div>
+                </div>
+            `;
+        }
     }
 
     // Utility: accorcia indirizzo
@@ -330,31 +396,42 @@ class NovaraApp {
 
     // Mostra notifica
     showNotification(title, message) {
-        // Implementa un sistema di notifiche toast
+        // Implementazione toast notification semplificata
         console.log(`📢 ${title}: ${message}`);
+        
+        // In una implementazione completa, aggiungere un sistema di notifiche toast
+        if (title.includes('success') || title.includes('✅')) {
+            console.log('🎉 ' + message);
+        }
     }
 
     // Mostra errore
     showError(message) {
-        alert(`❌ Errore: ${message}`);
+        alert(message);
     }
 
     // Mostra successo
     showSuccess(message) {
-        alert(`✅ ${message}`);
+        alert(message);
     }
 }
 
 // Funzioni globali per l'interfaccia
 function createWallet() {
-    const { address, privateKey } = walletManager.generateWallet();
-    updateCurrentWalletInfo();
-    app.refreshData();
-    
-    // Mostra private key per il backup
-    setTimeout(() => {
-        showPrivateKeyModal(privateKey, address);
-    }, 500);
+    try {
+        const { address, privateKey } = walletManager.generateWallet();
+        updateCurrentWalletInfo();
+        app.refreshData();
+        
+        // Mostra private key per il backup
+        setTimeout(() => {
+            showPrivateKeyModal(privateKey, address);
+        }, 500);
+        
+        app.showSuccess('✅ Wallet creato con successo!');
+    } catch (error) {
+        app.showError('❌ Errore creazione wallet: ' + error.message);
+    }
 }
 
 function showImportDialog() {
@@ -370,25 +447,29 @@ function importWallet() {
     const privateKey = document.getElementById('privateKeyInput').value.trim();
     
     if (!privateKey) {
-        alert('Inserisci una private key valida');
+        app.showError('Inserisci una private key valida');
         return;
     }
 
-    const address = walletManager.importWallet(privateKey);
-    
-    if (address) {
-        closeImportModal();
-        updateCurrentWalletInfo();
-        app.refreshData();
-        app.showSuccess('Wallet importato con successo!');
-    } else {
-        alert('Private key non valida');
+    try {
+        const address = walletManager.importWallet(privateKey);
+        
+        if (address) {
+            closeImportModal();
+            updateCurrentWalletInfo();
+            app.refreshData();
+            app.showSuccess('✅ Wallet importato con successo!');
+        } else {
+            app.showError('Private key non valida');
+        }
+    } catch (error) {
+        app.showError('❌ Errore importazione: ' + error.message);
     }
 }
 
 function showPrivateKey() {
     if (!walletManager.currentWallet) {
-        alert('Nessun wallet selezionato');
+        app.showError('Nessun wallet selezionato');
         return;
     }
 
@@ -408,35 +489,35 @@ function closePrivateKeyModal() {
 function copyPrivateKey() {
     const privateKey = document.getElementById('privateKeyDisplay').textContent;
     navigator.clipboard.writeText(privateKey).then(() => {
-        alert('Private Key copiata negli appunti! ⚠️ Conservala in un luogo sicuro!');
+        app.showSuccess('✅ Private Key copiata negli appunti! ⚠️ Conservala in un luogo sicuro!');
     });
 }
 
 function copyAddress() {
     if (!walletManager.currentWallet) {
-        alert('Nessun wallet selezionato');
+        app.showError('Nessun wallet selezionato');
         return;
     }
 
     navigator.clipboard.writeText(walletManager.currentWallet.address).then(() => {
-        alert('Indirizzo copiato negli appunti!');
+        app.showSuccess('✅ Indirizzo copiato negli appunti!');
     });
 }
 
 function copyReceiveAddress() {
     if (!walletManager.currentWallet) {
-        alert('Crea un wallet per ricevere NVR');
+        app.showError('Crea un wallet per ricevere NVR');
         return;
     }
 
     navigator.clipboard.writeText(walletManager.currentWallet.address).then(() => {
-        alert('Indirizzo copiato! Condividilo per ricevere NVR.');
+        app.showSuccess('✅ Indirizzo copiato! Condividilo per ricevere NVR.');
     });
 }
 
 function shareAddress() {
     if (!walletManager.currentWallet) {
-        alert('Crea un wallet per ricevere NVR');
+        app.showError('Crea un wallet per ricevere NVR');
         return;
     }
 
@@ -455,7 +536,7 @@ function selectWallet(address) {
     if (walletManager.selectWallet(address)) {
         updateCurrentWalletInfo();
         app.refreshData();
-        app.showSuccess('Wallet selezionato!');
+        app.showSuccess('✅ Wallet selezionato!');
     }
 }
 
@@ -472,6 +553,11 @@ function updateCurrentWalletInfo() {
         
         // Aggiorna balance
         app.refreshBalance();
+        
+        // Aggiorna QR code se siamo nella tab receive
+        if (app.currentTab === 'receive') {
+            app.generateQRCode();
+        }
     } else {
         addressElement.textContent = 'Crea o importa un wallet';
         receiveAddressElement.textContent = 'Crea un wallet per ricevere NVR';
@@ -486,3 +572,10 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentWalletInfo();
     app.updateWalletList();
 });
+
+// Service Worker per PWA (opzionale)
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log('✅ Service Worker registrato'))
+        .catch(error => console.log('❌ Errore Service Worker:', error));
+}
